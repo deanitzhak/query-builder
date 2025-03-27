@@ -1,6 +1,6 @@
 import React from "react";
 import { AddButtonProps } from "../../../types/interfaces/buttons/IButton";
-import { AddbuttonVariants } from "../../variants/Buttons/buttonVariants";
+import { AddbuttonVariants } from "../../variants/buttons/buttonVariants";
 
 export default function AddButton({ 
   label, 
@@ -12,25 +12,23 @@ export default function AddButton({
   disabled = false,
   fullWidth = false
 }: AddButtonProps) {
-  // Local handler to debug clicks if needed
-  const handleClick = () => {
-    console.log('Button clicked');
-    onClick(); // Call the passed onClick function
-  };
-
   return (
     <button 
       className={`
-        add-button rounded transition duration-200
-        ${AddbuttonVariants({ variant, size })}
-        ${fullWidth ? 'w-full' : ''} 
+        group relative overflow-hidden rounded-md font-medium transition-all
+        ${AddbuttonVariants({ variant, size, width: fullWidth ? 'full' : 'auto' })}
+        ${disabled ? 'opacity-60 cursor-not-allowed' : 'transform hover:-translate-y-[1px] active:translate-y-0'}
         ${className}
       `} 
-      onClick={handleClick}
+      onClick={disabled ? undefined : onClick}
       disabled={disabled}
+      aria-disabled={disabled}
     >
-      {icon && <span className="button-icon mr-2">{icon}</span>}
-      {label}
+      <div className="relative z-10 flex items-center justify-center gap-2">
+        {icon && <span className="button-icon flex-shrink-0">{icon}</span>}
+        {label && <span className="button-label">{label}</span>}
+      </div>
+      <span className="absolute inset-0 z-0 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100" />
     </button>
   );
 }
