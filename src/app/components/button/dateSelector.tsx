@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { DateSelectorProps } from '../../../types/interfaces/buttons/IDateSelector';
-import { dateSelectorVariants, dateInputVariants } from '../../variants/Buttons/dateSelectorVariants';
+import { dateSelectorVariants, dateInputVariants } from '../../variants/buttons/dateSelectorVariants';
 
 export default function DateSelector({
   label,
