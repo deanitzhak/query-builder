@@ -1,13 +1,13 @@
 // src/components/button/inputButton.tsx
 import React, { useState } from "react";
-import { getInputClass } from "../../variants/buttons/inputVariants";
 import { withButtonRegistration } from "../../patterns/decorator/buttonDecorator";
+import { getButtonStyle, getInputStyle, mapVariant, ButtonVariant } from "../../variants/buttonThemes";
 
 interface InputButtonProps {
   label: string;
   onClick: () => void;
   className?: string;
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'glass';
+  variant?: ButtonVariant;
   size?: 'sm' | 'md' | 'lg';
   placeholder?: string;
   onInputChange?: (value: string) => void;
@@ -60,8 +60,8 @@ function InputButton({
     lg: "px-5"
   };
 
-  // Get button styling based on variant
-  const getButtonStyle = () => {
+  // Get button styling from themes
+  const getButtonStyles = () => {
     const baseStyle = `
       min-w-[72px] flex items-center justify-center
       rounded-l-xl
@@ -72,53 +72,12 @@ function InputButton({
       ${disabled ? 'opacity-60 cursor-not-allowed' : ''}
     `;
 
-    const variantStyles = {
-      primary: `
-        bg-[#0f1729] text-white border-0
-        shadow-[0_1px_2px_rgba(0,0,0,0.1)]
-        hover:bg-[#1a2844] hover:shadow-[0_2px_4px_rgba(0,0,0,0.12)]
-        active:bg-[#0a0f1a] active:shadow-[0_1px_1px_rgba(0,0,0,0.15)]
-      `,
-      secondary: `
-        bg-gray-100/90 text-gray-800 border-0
-        shadow-[0_1px_2px_rgba(0,0,0,0.05)]
-        hover:bg-gray-200/90 hover:shadow-[0_2px_4px_rgba(0,0,0,0.08)]
-        active:bg-gray-300/90 active:shadow-[0_1px_1px_rgba(0,0,0,0.1)]
-      `,
-      tertiary: `
-        bg-white/95 text-gray-700 border-0
-        shadow-[0_0_0_1px_rgba(0,0,0,0.07),0_1px_2px_rgba(0,0,0,0.04)]
-        hover:bg-gray-50/95 hover:shadow-[0_0_0_1px_rgba(0,0,0,0.09),0_2px_4px_rgba(0,0,0,0.06)]
-        active:bg-gray-100/95 active:shadow-[0_0_0_1px_rgba(0,0,0,0.09),0_1px_1px_rgba(0,0,0,0.08)]
-      `,
-      ghost: `
-        bg-transparent text-gray-700 border-0
-        hover:bg-gray-50/90
-        active:bg-gray-100/90
-      `,
-      glass: `
-        bg-white/10 backdrop-blur-md text-white border-0
-        shadow-[0_0_0_1px_rgba(255,255,255,0.1)]
-        hover:bg-white/15 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.15)]
-        active:bg-white/20 active:shadow-[0_0_0_1px_rgba(255,255,255,0.2)]
-      `
-    };
-
-    return `${baseStyle} ${variantStyles[variant]}`;
+    // Use the themed style for the button
+    return `${baseStyle} ${getButtonStyle(variant, size, 'auto')}`;
   };
 
-  // Get input variant based on button variant
-  const getInputVariant = () => {
-    const variantMap = {
-      primary: "default",
-      secondary: "secondary",
-      tertiary: "tertiary",
-      ghost: "ghost",
-      glass: "glass"
-    };
-    
-    return disabled ? "disabled" : variantMap[variant] || "default";
-  };
+  // Get input variant based on button variant using the mapping function
+  const inputVariant = disabled ? "disabled" : mapVariant(variant as ButtonVariant, "buttonToInput");
   
   return (
     <form 
@@ -140,8 +99,8 @@ function InputButton({
           onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
           disabled={disabled}
-          className={getInputClass({
-            variant: getInputVariant() as any,
+          className={getInputStyle({
+            variant: inputVariant as any,
             size,
             width: "full",
             className: "rounded-r-xl rounded-l-none" // RTL layout with rounded corner adjustment
@@ -149,7 +108,7 @@ function InputButton({
         />
         <button
           type="submit"
-          className={getButtonStyle()}
+          className={getButtonStyles()}
           aria-label={label}
           disabled={disabled}
         >

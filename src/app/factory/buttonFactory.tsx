@@ -41,7 +41,7 @@ const ButtonFactory: React.FC<ButtonFactoryProps> = ({
   // If no component found, return null
   if (!ButtonComponent) {
     console.warn(`Button type "${type}" not found in registry. Available types: ${getButtonComponent('') ? 'None' : 'Unknown'}`);
-    return null;
+    return null;  
   }
   
   // Create props object with all available props

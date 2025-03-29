@@ -1,8 +1,13 @@
 // src/components/button/dateSelector.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { DateSelectorProps } from '../../../types/interfaces/buttons/IDateSelector';
-import { dateSelectorVariants, dateInputVariants } from '../../variants/buttons/dateSelectorVariants';
 import { withButtonRegistration } from '../../patterns/decorator/buttonDecorator';
+import { 
+  getButtonStyle, 
+  getInputStyle, 
+  ButtonVariant, 
+  InputVariant 
+} from '../../variants/buttonThemes';
 
 function DateSelector({
   label,
@@ -66,7 +71,7 @@ function DateSelector({
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         type="button"
-        className={`${dateSelectorVariants({ variant, size })} ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+        className={`${getButtonStyle(variant as ButtonVariant, size as any)} ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
         onClick={toggleDropdown}
         disabled={disabled}
       >
@@ -83,7 +88,10 @@ function DateSelector({
                 type="date"
                 value={startDate}
                 onChange={handleStartDateChange}
-                className={dateInputVariants({ variant: "default", size })}
+                className={getInputStyle({
+                  variant: "default" as InputVariant,
+                  size: size as any
+                })}
               />
             </div>
             
@@ -93,7 +101,10 @@ function DateSelector({
                 type="date"
                 value={endDate}
                 onChange={handleEndDateChange}
-                className={dateInputVariants({ variant: "default", size })}
+                className={getInputStyle({
+                  variant: "default" as InputVariant,
+                  size: size as any
+                })}
               />
             </div>
             
@@ -101,14 +112,14 @@ function DateSelector({
               <button 
                 type="button"
                 onClick={handleClear}
-                className={dateSelectorVariants({ variant: "secondary", size: "sm" })}
+                className={getButtonStyle("secondary" as ButtonVariant, "sm" as any)}
               >
                 נקה
               </button>
               <button 
                 type="button"
                 onClick={handleApply}
-                className={dateSelectorVariants({ variant, size: "sm" })}
+                className={getButtonStyle(variant as ButtonVariant, "sm" as any)}
               >
                 החל
               </button>

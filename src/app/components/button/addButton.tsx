@@ -1,8 +1,8 @@
 // src/components/button/addButton.tsx
 import React from "react";
 import { AddButtonProps } from "../../../types/interfaces/buttons/IButton";
-import { AddbuttonVariants } from "../../variants/buttons/buttonVariants";
 import { withButtonRegistration } from "../../patterns/decorator/buttonDecorator";
+import { getButtonStyle, ButtonVariant } from "../../variants/buttonThemes";
 
 function AddButton({ 
   label, 
@@ -18,7 +18,7 @@ function AddButton({
     <button 
       className={`
         group relative overflow-hidden rounded-md font-medium transition-all
-        ${AddbuttonVariants({ variant, size, width: fullWidth ? 'full' : 'auto' })}
+        ${getButtonStyle(variant as ButtonVariant, size as any, fullWidth ? 'full' : 'auto')}
         ${disabled ? 'opacity-60 cursor-not-allowed' : 'transform hover:-translate-y-[1px] active:translate-y-0'}
         ${className}
       `} 
