@@ -1,5 +1,7 @@
+// src/components/button/inputButton.tsx
 import React, { useState } from "react";
 import { getInputClass } from "../../variants/buttons/inputVariants";
+import { withButtonRegistration } from "../../patterns/decorator/buttonDecorator";
 
 interface InputButtonProps {
   label: string;
@@ -11,9 +13,10 @@ interface InputButtonProps {
   onInputChange?: (value: string) => void;
   initialValue?: string;
   disabled?: boolean;
+  icon?: string;
 }
 
-export default function InputButton({
+function InputButton({
   label,
   onClick,
   className = "",
@@ -23,6 +26,7 @@ export default function InputButton({
   onInputChange,
   initialValue = "",
   disabled = false,
+  icon,
 }: InputButtonProps) {
   const [value, setValue] = useState(initialValue);
   const [isFocused, setIsFocused] = useState(false);
@@ -160,3 +164,6 @@ export default function InputButton({
     </form>
   );
 }
+
+// Register this component with the button registry
+export default withButtonRegistration(InputButton, 'input');

@@ -1,8 +1,10 @@
+// src/components/button/dateSelector.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { DateSelectorProps } from '../../../types/interfaces/buttons/IDateSelector';
 import { dateSelectorVariants, dateInputVariants } from '../../variants/buttons/dateSelectorVariants';
+import { withButtonRegistration } from '../../patterns/decorator/buttonDecorator';
 
-export default function DateSelector({
+function DateSelector({
   label,
   icon = "📅",
   onChange,
@@ -117,3 +119,6 @@ export default function DateSelector({
     </div>
   );
 }
+
+// Register this component with the button registry
+export default withButtonRegistration(DateSelector, 'date');

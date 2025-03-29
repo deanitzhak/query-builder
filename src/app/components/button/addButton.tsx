@@ -1,8 +1,10 @@
+// src/components/button/addButton.tsx
 import React from "react";
 import { AddButtonProps } from "../../../types/interfaces/buttons/IButton";
 import { AddbuttonVariants } from "../../variants/buttons/buttonVariants";
+import { withButtonRegistration } from "../../patterns/decorator/buttonDecorator";
 
-export default function AddButton({ 
+function AddButton({ 
   label, 
   onClick, 
   icon, 
@@ -32,3 +34,6 @@ export default function AddButton({
     </button>
   );
 }
+
+// Register this component with the button registry
+export default withButtonRegistration(AddButton, 'button');

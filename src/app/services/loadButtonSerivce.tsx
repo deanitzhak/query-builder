@@ -1,4 +1,4 @@
-import type { ButtonConfig } from "../../../../types/interfaces/layout/IHeader";
+import type { ButtonConfig } from "../../types/interfaces/layout/IHeader";
 
 // Function to get header configuration (simulating API call)
 export async function getHeaderConfig(): Promise<ButtonConfig[]> {

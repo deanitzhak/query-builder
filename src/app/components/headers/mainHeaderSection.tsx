@@ -1,19 +1,14 @@
+// src/app/components/headers/mainHeaderSection.tsx
 import React, { useState, useEffect } from "react";
 import type { IHeaderSection } from "../../../types/interfaces/layout/IHeader";
 import '../../style/header.css';
-import AddButton from "../button/addButton";
-import InputButton from "../button/inputButton";
-import DateSelector from "../button/dateSelector";
-import { getHeaderConfig } from "../button/services/loadButtonSerivce";
+import { getHeaderConfig } from "../../services/loadButtonSerivce";
+import ButtonFactory from "../../factory/buttonFactory";
+import { initializeButtonRegistry, getRegisteredButtonTypes } from "../../patterns/registration/buttonRegistry";
+import type { ButtonConfig } from "../../factory/buttonFactory";
 
-// Define types for our button configurations
-interface ButtonConfig {
-  type: 'button' | 'input' | 'date';
-  label: string;
-  icon: string;
-  action: string; // Action identifier
-  variant?: 'primary' | 'secondary' | 'tertiary';
-}
+// Initialize the button registry only once (module level variable)
+let buttonRegistryInitialized = false;
 
 export default function MainHeaderSection({ title = "Default Section Title", subtitle, className = "" }: IHeaderSection) {
     const [components, setComponents] = useState<ButtonConfig[]>([]);
@@ -23,8 +18,19 @@ export default function MainHeaderSection({ title = "Default Section Title", sub
         start: null,
         end: null
     });
+    const [registeredButtons, setRegisteredButtons] = useState<string[]>([]);
 
     useEffect(() => {
+        // Initialize button registry only once
+        if (!buttonRegistryInitialized) {
+            initializeButtonRegistry();
+            buttonRegistryInitialized = true;
+        }
+        
+        // Get a list of all registered button types for debugging/monitoring
+        setRegisteredButtons(getRegisteredButtonTypes());
+        console.log('Registered button types:', getRegisteredButtonTypes());
+        
         async function loadHeaderComponents() {
             try {
                 setIsLoading(true);
@@ -32,6 +38,7 @@ export default function MainHeaderSection({ title = "Default Section Title", sub
                 const config = await getHeaderConfig();
                 setComponents(config);
                 setError(null);
+                console.log('Loaded components:', config);
             } catch (err) {
                 console.error("Failed to load header configuration", err);
                 setError("Failed to load header tools");
@@ -74,46 +81,6 @@ export default function MainHeaderSection({ title = "Default Section Title", sub
         setDateRange({ start, end });
         console.log(`Date range updated: ${start} to ${end}`);
     };
-
-    // Render each component based on its type
-    const renderComponent = (component: ButtonConfig, index: number) => {
-        const key = `${component.type}-${index}`;
-        
-        if (component.type === 'input') {
-            return (
-                <InputButton 
-                    key={key}
-                    label={component.label} 
-                    icon={component.icon} 
-                    onClick={() => handleAction(component.action)} 
-                    className="add-button-header"
-                    variant={component.variant || "primary"}
-                />
-            );
-        } else if (component.type === 'date') {
-            return (
-                <DateSelector
-                    key={key}
-                    label={component.label}
-                    icon={component.icon}
-                    onChange={handleDateChange}
-                    className="date-selector-header"
-                    variant={component.variant || "primary"}
-                />
-            );
-        }
-        
-        return (
-            <AddButton 
-                key={key}
-                label={component.label} 
-                icon={component.icon} 
-                onClick={() => handleAction(component.action)} 
-                className="add-button-header"
-                variant={component.variant || "primary"}
-            />
-        );
-    };
     
     return (
         <div className={`${className} main_header_section`}>
@@ -123,8 +90,25 @@ export default function MainHeaderSection({ title = "Default Section Title", sub
                 ) : error ? (
                     <div className="text-sm text-red-500">{error}</div>
                 ) : (
-                    components.map(renderComponent)
+                    <>
+                        {components.map((component, index) => (
+                            <ButtonFactory
+                                key={`button-factory-${index}`}
+                                config={component}
+                                onAction={handleAction}
+                                onDateChange={handleDateChange}
+                                className="add-button-header"
+                                index={index}
+                            />
+                        ))}
+                    </>
                 )}
+            </div>
+            
+            {/* Debug panel */}
+            <div className="fixed bottom-2 right-2 text-xs text-gray-500 bg-white/70 p-2 rounded shadow-sm">
+                <div>Registered buttons: {registeredButtons.join(', ') || 'None'}</div>
+                <div>Component count: {components.length}</div>
             </div>
         </div>
     );
@@ -167,7 +151,7 @@ function getDefaultComponents(): ButtonConfig[] {
             action: 'batchActions',
             variant: 'primary'
         },
-        {
+        {   
             type: 'button',
             label: 'דוחות',
             icon: '',
