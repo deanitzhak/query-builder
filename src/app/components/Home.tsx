@@ -137,29 +137,31 @@ export default function Home() {
   };
 
   return (
-    <div className="page-wrapper min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
       {/* Header component */}
       <Header title={title} className='header' />
       
       {/* Main content body */}
       <Body>
-        <div className="bg-white rounded-xl shadow-md p-6">
-          <h2 className="text-xl font-medium text-[#4e165a] mb-6">רשימת מופעים זמינים</h2>
-          
-          {/* Events list component */}
-          <List
-            columns={columns}
-            dataFetcher={eventDataFetcher}
-            actionButtons={actionButtons}
-            showPagination={true}
-            itemsPerPage={10}
-            defaultSortColumn="date"
-            defaultSortDirection="asc"
-            onRowClick={handleRowClick}
-            variant="default"
-            size="md"
-            emptyStateMessage="לא נמצאו מופעים להצגה"
-          />
+        <div className="max-w-7xl mx-auto my-8">
+          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+            <h2 className="text-2xl font-semibold text-[#4e165a] mb-6">רשימת מופעים זמינים</h2>
+            
+            {/* Events list component */}
+            <List
+              columns={columns}
+              dataFetcher={eventDataFetcher}
+              actionButtons={actionButtons}
+              showPagination={true}
+              itemsPerPage={10}
+              defaultSortColumn="date"
+              defaultSortDirection="asc"
+              onRowClick={handleRowClick}
+              variant="default"
+              size="md"
+              emptyStateMessage="לא נמצאו מופעים להצגה"
+            />
+          </div>
         </div>
       </Body>
       
@@ -174,4 +176,4 @@ export default function Home() {
       */}
     </div>
   );
-}
+  }
