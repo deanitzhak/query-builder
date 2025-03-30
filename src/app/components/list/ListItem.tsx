@@ -2,7 +2,7 @@
 import React from 'react';
 import { IListItemProps } from '../../../types/interfaces/events/IEvents';
 
-import { getRowClass, getCellClass, getActionCellClass } from '../../variants/listTheme';
+import { getRowClass, getCellClass, getActionCellClass } from '../../variants/ListTheme';
 import { getButtonStyle, ButtonVariant } from '../../variants/buttonThemes';
 
 const ListItem: React.FC<IListItemProps> = ({

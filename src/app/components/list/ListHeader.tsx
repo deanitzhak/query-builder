@@ -1,7 +1,7 @@
 // src/components/list/ListHeader.tsx
 import React from 'react';
 import { IListHeaderProps } from '../../../types/interfaces/events/IEvents';
-import { getHeaderRowClass, getHeaderCellClass } from '../../variants/listTheme';
+import { getHeaderRowClass, getHeaderCellClass } from '../../variants/ListTheme';
 
 const ListHeader: React.FC<IListHeaderProps> = ({
   columns,

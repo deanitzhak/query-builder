@@ -10,7 +10,7 @@ import {
   HeaderVariant, 
   PaginationVariant 
 } from '../../../types/interfaces/events/IEvents';
-import { getListContainerClass, getTableClass } from '../../variants/listTheme';
+import { getListContainerClass, getTableClass } from '../../variants/ListTheme';
 
 import ListHeader from './ListHeader';
 import ListBody from './ListBody';

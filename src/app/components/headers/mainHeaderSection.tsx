@@ -7,10 +7,20 @@ import ButtonFactory from "../../factory/buttonFactory";
 import { initializeButtonRegistry, getRegisteredButtonTypes } from "../../patterns/registration/buttonRegistry";
 import type { ButtonConfig } from "../../factory/buttonFactory";
 
+// Extended IHeaderSection interface
+interface ExtendedHeaderSectionProps extends IHeaderSection {
+  onAdvancedButtonClick?: () => void;
+}
+
 // Initialize the button registry only once (module level variable)
 let buttonRegistryInitialized = false;
 
-export default function MainHeaderSection({ title = "Default Section Title", subtitle, className = "" }: IHeaderSection) {
+export default function MainHeaderSection({ 
+  title = "Default Section Title", 
+  subtitle, 
+  className = "",
+  onAdvancedButtonClick
+}: ExtendedHeaderSectionProps) {
     const [components, setComponents] = useState<ButtonConfig[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -63,7 +73,13 @@ export default function MainHeaderSection({ title = "Default Section Title", sub
             'dateFilter': () => { 
                 console.log('Date filter', dateRange);
             },
-            'advanced': () => { console.log('Opening advanced options'); },
+            'advanced': () => { 
+                console.log('Opening advanced options');
+                // Call the advanced button click handler if provided
+                if (onAdvancedButtonClick) {
+                    onAdvancedButtonClick();
+                }
+            },
             'batchActions': () => { console.log('Opening batch actions menu'); },
             'reports': () => { console.log('Opening reports menu'); },
         };
