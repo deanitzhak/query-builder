@@ -1,7 +1,7 @@
 // src/components/list/ListBody.tsx
 import React from 'react';
 import { IListBodyProps } from '../../../types/interfaces/events/IEvents';
-import ListItem from './ListItem';
+import ListItem from './listItem';
 
 const ListBody: React.FC<IListBodyProps> = ({
   items,
