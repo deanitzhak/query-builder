@@ -5,7 +5,7 @@ import Header from "./headers/header";
 
 
 import Body from "./body/body";
-import List from "../components/list/List";
+import List from "./list/list";
 import EventDataFetcher from "../services/EventDataFetcher";
 import { 
   IColumn, 

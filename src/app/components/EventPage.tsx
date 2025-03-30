@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from 'react';
-import Header from "../components/headers/header";
+import Header from "./headers/header";
 
-import List from '../components/list/List';
+import List from './list/list';
 import EventDataFetcher from '../services/EventDataFetcher';
 import { IColumn, IActionButton, IExtendedEvent } from '../../types/interfaces/events/IEvents';
 

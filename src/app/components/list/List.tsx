@@ -10,12 +10,12 @@ import {
   HeaderVariant, 
   PaginationVariant 
 } from '../../../types/interfaces/events/IEvents';
-import { getListContainerClass, getTableClass } from '../../variants/ListTheme';
+import { getListContainerClass, getTableClass } from '../../variants/listTheme';
 
-import ListHeader from './ListHeader';
-import ListBody from './ListBody';
-import Pagination from './Pagination';
-import SearchInput from './SearchInput';
+import ListHeader from './listHeader';
+import ListBody from './listBody';
+import Pagination from './pagination';
+import SearchInput from './searchInput';
 
 const List: React.FC<IListProps> = ({
   columns,

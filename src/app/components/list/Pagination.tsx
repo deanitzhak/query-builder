@@ -2,7 +2,7 @@
 import React from 'react';
 import { IPaginationProps } from '../../../types/interfaces/events/IEvents';
 
-import { getPaginationContainerClass } from '../../variants/ListTheme';
+import { getPaginationContainerClass } from '../../variants/listTheme';
 import { getButtonStyle, ButtonVariant } from '../../variants/buttonThemes';
 
 const Pagination: React.FC<IPaginationProps> = ({
