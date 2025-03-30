@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Header from "./headers/header";
 
-import List from './list/list';
+import List from './list/List';
 import EventDataFetcher from '../services/EventDataFetcher';
 import { IColumn, IActionButton, IExtendedEvent } from '../../types/interfaces/events/IEvents';
 
