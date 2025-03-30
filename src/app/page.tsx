@@ -3,7 +3,7 @@
 import React from 'react';
 import Header from "../app/components/headers/header";
 // import EventsPage from './components/EventPage';
-import HomeComp from './components/home';
+import HomeComp from './components/Home';
 // shuld be a get title from the API
 // fetch().then((response) => response.json()).then((data) => console.log(data));
 // based on the click of the user in the system
