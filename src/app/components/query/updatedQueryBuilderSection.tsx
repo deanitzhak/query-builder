@@ -6,7 +6,7 @@ import {
   IFieldDefinition,
   IFieldCategory 
 } from '../../../types/queries/IQueryBuilder';
-import QueryBuilder from './QueryBuilder';
+import QueryBuilder from './queryBuilder';
 import { generateUniqueId } from '../../../types/utils/idGenerator';
 import { getInputStyle } from '../../variants/buttonThemes';
 
