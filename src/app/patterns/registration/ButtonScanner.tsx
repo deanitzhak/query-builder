@@ -55,7 +55,21 @@ export const scanButtonDirectory = (): void => {
           buttonType = 'input';
         } else if (path.includes('dateSelector')) {
           buttonType = 'date';
-        } else {
+        }else if (path.includes('dropdownButton')) {
+          buttonType = 'dropdown';
+        }else if (path.includes('toggleButton')) {
+          buttonType = 'toggle';
+        }
+        else if (path.includes('searchButton')) {
+          buttonType = 'search';
+        }
+        else if (path.includes('clearButton')) {
+          buttonType = 'clear';
+        }
+        else if (path.includes('submitButton')) {
+          buttonType = 'submit';
+        }
+        else {
           // For any other button types, extract from filename
           const match = path.match(/\.\/(\w+)Button\.(tsx|jsx)$/);
           if (match && match[1]) {
