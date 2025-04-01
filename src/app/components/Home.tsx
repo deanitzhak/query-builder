@@ -4,19 +4,32 @@ import React, { useState } from 'react';
 import Header from "./headers/header";
 import Body from "./body/body";
 import EditSection from "./edit/editSection";
+import UpdatedQueryBuilderSection from "./query/updatedQueryBuilderSection";
 import List from "../components/list/List";
 import EventDataFetcher from "../services/EventDataFetcher";
 import { 
   IColumn, 
   IActionButton, 
-  IExtendedEvent 
+  IExtendedEvent
 } from "../../types/interfaces/events/IEvents";
+import { IQuery, FilterType } from '../../types/queries/IQueryBuilder';
 
 // Set the page title
 const title = 'איתור מופעים';
 
 // Create an instance of the event data fetcher
 const eventDataFetcher = new EventDataFetcher();
+
+// Define sample field definitions for display
+const allFields = [
+  { value: 'name', label: 'שם אירוע', type: 'text' as FilterType },
+  { value: 'department', label: 'מחלקה', type: 'select' as FilterType },
+  { value: 'hall', label: 'אולם', type: 'select' as FilterType },
+  { value: 'date', label: 'תאריך', type: 'date' as FilterType },
+  { value: 'available', label: 'כרטיסים זמינים', type: 'number' as FilterType },
+  { value: 'price', label: 'מחיר', type: 'number' as FilterType },
+  { value: 'status', label: 'סטטוס', type: 'select' as FilterType }
+];
 
 // Define the columns for our events table
 const columns: IColumn[] = [
@@ -131,10 +144,21 @@ export default function Home() {
   // State for controlling EditSection visibility
   const [isEditSectionVisible, setIsEditSectionVisible] = useState(false);
   
+  // State for search query
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // State for search parameters
+  const [searchParams, setSearchParams] = useState<any>({});
+  
+  // State for initial load indicator
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  
+  // State for refresh trigger
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  
   // Handle row click to view event details
   const handleRowClick = (event: IExtendedEvent) => {
     setSelectedEvent(event);
-    // In a real app, this might open a modal or navigate to a details page
     console.log("Selected event:", event);
   };
 
@@ -142,9 +166,76 @@ export default function Home() {
   const handleAdvancedClick = () => {
     setIsEditSectionVisible(!isEditSectionVisible);
   };
+  
+  // Helper function to create display text for a condition
+  const getDisplayTextForCondition = (condition: any) => {
+    const field = allFields.find(f => f.value === condition.field);
+    const fieldLabel = field?.label || condition.field;
+    
+    let opText = '';
+    switch (condition.operator) {
+      case 'equals': opText = 'שווה ל'; break;
+      case 'notEquals': opText = 'לא שווה ל'; break;
+      case 'contains': opText = 'מכיל'; break;
+      case 'startsWith': opText = 'מתחיל ב'; break;
+      case 'endsWith': opText = 'מסתיים ב'; break;
+      case 'greaterThan': opText = 'גדול מ'; break;
+      case 'lessThan': opText = 'קטן מ'; break;
+      case 'between': opText = 'בין'; break;
+      case 'in': opText = 'אחד מ'; break;
+      case 'notIn': opText = 'לא אחד מ'; break;
+    }
+    
+    const valueText = Array.isArray(condition.value) 
+      ? condition.value.join(', ') 
+      : String(condition.value || '');
+    
+    return condition.negated 
+      ? `${fieldLabel} לא ${opText} ${valueText}`
+      : `${fieldLabel} ${opText} ${valueText}`;
+  };
+  
+  // Function to handle search from query builder
+  const handleSearch = (query: IQuery) => {
+    console.log('Searching with query:', query);
+    setIsInitialLoad(false);
+    
+    // Convert the query to search parameters
+    if (query.rootGroup.conditions.length > 0) {
+      const firstCondition = query.rootGroup.conditions[0];
+      const params = {
+        field: firstCondition.field,
+        operator: firstCondition.operator,
+        value: firstCondition.value,
+        negated: firstCondition.negated
+      };
+      
+      // Store the parameters for the data fetcher
+      setSearchParams(params);
+      
+      // Store a display text for the user
+      const displayText = firstCondition.field 
+        ? getDisplayTextForCondition(firstCondition)
+        : "מסנן מורכב";
+      
+      setSearchQuery(displayText);
+    } else if (query.rootGroup.groups.length > 0) {
+      // For complex queries with nested groups
+      setSearchQuery("מסנן מורכב");
+      setSearchParams({
+        complexQuery: query
+      });
+    } else {
+      // Empty query
+      setSearchQuery('');
+      setSearchParams({});
+    }
+    
+    setRefreshTrigger(prev => prev + 1);
+  };
 
   return (
-    <div className=" min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 items-center mr-[25%]">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mr-[25%]">
       {/* Header with the advanced button handler */}
       <Header 
         title={title} 
@@ -157,26 +248,13 @@ export default function Home() {
         <EditSection 
           isVisible={isEditSectionVisible}
           onClose={() => setIsEditSectionVisible(false)}
+          onSearch={handleSearch}
           className="mt-4"
         >
-          {/* This can be your simple form or any content */}
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-medium text-[#4e165a]">חיפוש מתקדם</h3>
-            
-            <button 
-              onClick={() => setIsEditSectionVisible(false)}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          
-          <div className="mt-4">
-            {/* Your form will go here */}
-            <p>תוכן החיפוש המתקדם יופיע כאן</p>
-          </div>
+          <UpdatedQueryBuilderSection 
+            onSearch={handleSearch}
+            onClose={() => setIsEditSectionVisible(false)}
+          />
         </EditSection>
       </div>
       
@@ -184,7 +262,30 @@ export default function Home() {
       <Body>
         <div className="max-w-7xl mx-auto my-8">
           <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-            <h2 className="text-2xl font-semibold text-[#4e165a] mb-6">רשימת מופעים זמינים</h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-semibold text-[#4e165a]">רשימת מופעים זמינים</h2>
+              
+              {/* Display active search query if any */}
+              {searchQuery && (
+                <div className="flex items-center px-3 py-1.5 bg-[#f2e8f5]/50 text-[#4e165a] rounded-md">
+                  <span className="text-sm">סינון פעיל: {searchQuery}</span>
+                  <button
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSearchParams({});
+                      setIsInitialLoad(true);
+                      setRefreshTrigger(prev => prev + 1);
+                    }}
+                    className="mr-2 p-1 text-[#4e165a]/70 hover:text-[#4e165a] rounded-full"
+                    aria-label="נקה סינון"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
             
             {/* Events list component */}
             <List
@@ -198,7 +299,11 @@ export default function Home() {
               onRowClick={handleRowClick}
               variant="default"
               size="md"
-              emptyStateMessage="לא נמצאו מופעים להצגה"
+              emptyStateMessage={isInitialLoad ? "בנה שאילתא להצגת אירועים" : "לא נמצאו מופעים להצגה"}
+              initialSearchQuery={searchQuery}
+              searchParams={searchParams}
+              refreshTrigger={refreshTrigger}
+              isInitialLoad={isInitialLoad}
             />
           </div>
         </div>

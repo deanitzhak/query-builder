@@ -145,22 +145,101 @@ class EventDataFetcher implements IEventDataFetcher {
   }
 
   /**
-   * Search events by query string
+   * Enhanced search events method with support for operators
    */
   async searchEvents(query: string, params?: any): Promise<IExtendedEvent[]> {
-    if (!query) {
-      return this.fetchEvents(params);
+    // If no query and no params, return all events
+    if (!query && (!params || Object.keys(params).length === 0)) {
+      return this.fetchEvents();
     }
     
-    // Case-insensitive search across multiple fields
-    const normalizedQuery = query.toLowerCase();
-    const searchResults = mockEvents.filter(event => 
-      event.name.toLowerCase().includes(normalizedQuery) ||
-      event.department.toLowerCase().includes(normalizedQuery) ||
-      event.hall.toLowerCase().includes(normalizedQuery)
-    );
+    let filteredEvents = [...mockEvents];
     
-    return this.simulateApiCall(searchResults);
+    // Handle specific field and operator searches
+    if (params?.field) {
+      const fieldName = params.field;
+      const operator = params.operator || 'contains';
+      const searchValue = params.value;
+      const isNegated = params.negated === true;
+      
+      filteredEvents = filteredEvents.filter(event => {
+        const fieldValue = event[fieldName];
+        let matches = false;
+        
+        switch (operator) {
+          case 'equals':
+            matches = String(fieldValue) === String(searchValue);
+            break;
+          case 'notEquals':
+            matches = String(fieldValue) !== String(searchValue);
+            break;
+          case 'contains':
+            matches = String(fieldValue).toLowerCase().includes(String(searchValue).toLowerCase());
+            break;
+          case 'startsWith':
+            matches = String(fieldValue).toLowerCase().startsWith(String(searchValue).toLowerCase());
+            break;
+          case 'endsWith':
+            matches = String(fieldValue).toLowerCase().endsWith(String(searchValue).toLowerCase());
+            break;
+          case 'greaterThan':
+            matches = Number(fieldValue) > Number(searchValue);
+            break;
+          case 'lessThan':
+            matches = Number(fieldValue) < Number(searchValue);
+            break;
+          case 'between':
+            if (Array.isArray(searchValue) && searchValue.length === 2) {
+              // For dates, we might need special comparison
+              if (fieldName === 'date') {
+                // Simple string comparison for dates in format DD/MM/YYYY
+                matches = String(fieldValue) >= String(searchValue[0]) && 
+                         String(fieldValue) <= String(searchValue[1]);
+              } else {
+                matches = Number(fieldValue) >= Number(searchValue[0]) && 
+                         Number(fieldValue) <= Number(searchValue[1]);
+              }
+            }
+            break;
+          case 'in':
+            if (Array.isArray(searchValue)) {
+              matches = searchValue.some(val => String(val) === String(fieldValue));
+            }
+            break;
+          case 'notIn':
+            if (Array.isArray(searchValue)) {
+              matches = !searchValue.some(val => String(val) === String(fieldValue));
+            }
+            break;
+          default:
+            matches = true;
+        }
+        
+        // Apply negation if needed
+        return isNegated ? !matches : matches;
+      });
+      
+      return this.simulateApiCall(filteredEvents);
+    }
+    
+    // Handle complex queries (not implemented in this demo)
+    if (params?.complexQuery) {
+      console.log('Complex query:', params.complexQuery);
+      // In a real implementation, you would process the entire query tree
+      return this.simulateApiCall(filteredEvents.slice(0, 3)); // Return first 3 events as demo
+    }
+    
+    // Simple text search as fallback
+    if (query) {
+      const normalizedQuery = String(query).toLowerCase();
+      filteredEvents = filteredEvents.filter(event => 
+        event.name.toLowerCase().includes(normalizedQuery) ||
+        event.department.toLowerCase().includes(normalizedQuery) ||
+        event.hall.toLowerCase().includes(normalizedQuery)
+      );
+    }
+    
+    return this.simulateApiCall(filteredEvents);
   }
 }
 

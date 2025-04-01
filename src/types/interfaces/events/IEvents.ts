@@ -62,6 +62,7 @@ export interface IEventDataFetcher {
 }
 
 // Props for the list component
+// In src/types/interfaces/events/IEvents.ts, update the IListProps interface
 export interface IListProps {
   columns: IColumn[];
   dataFetcher: IEventDataFetcher;
@@ -77,9 +78,10 @@ export interface IListProps {
   size?: SizeVariant;
   className?: string;
   initialSearchQuery?: string;
-  refreshTrigger?: number; // To force refresh from parent component
+  refreshTrigger?: number;
+  searchParams?: any; // Add this line
+  isInitialLoad?: boolean; // Add this line
 }
-
 // Props for the list item component
 export interface IListItemProps {
   item: IExtendedEvent;
